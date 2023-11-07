@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rectangles, Buttons, and Radio Buttons</title>
+    <style>
+        /* Center the content on the screen */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* This will ensure the content stays centered vertically */
+            margin: 0;
+            flex-direction: column; /* Add this to stack the elements vertically */
+        }
+
+        .rect_container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px; /* Add spacing between the rectangles and buttons */
+        }
+
+        .rectangles {
+            border: 1px solid black;
+        }
+
+        .rec_text {
+            margin-right: 20px; /* Add spacing between the rectangles and buttons */
+        }
+
+        /* Add this CSS to style the .button_container */
+        .button_container {
+            display: flex;
+        }
+
+        /* Add some margin to separate the columns */
+        .button_column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Add some margin to separate the buttons and radio buttons */
+        .button_column button,
+        .button_column input[type="radio"] {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="rect_container" id="rec_cont">
+            <div class="rectangles" id="rec1" style="width: 150px; height: 60px;"></div>
+            <div class="rectangles" id="rec2" style="width: 80px; height: 200px;"></div>
+            <div class="rectangles" id="rec3" style="width: 130px; height: 60px;"></div>
+        </div>
+        <div class="rec_text">
+            <div id="rec1_text"></div>
+            <div id="rec2_text"></div>
+            <div id="rec3_text"></div>
+            <div class="rec_text" id="mouseclick"> Click on the rectangle with the bigger area</div>
+        </div>
+
+        <div class="button_container">
+            <div class="button_column">
+                <!-- Button Pair 1 -->
+                <button id="pair1" style="width: 200px;height: 50px;">A-B</button>
+                <br>
+                <input type="radio" name="choice" value="option1" id="option1">
+                <label for="option1" id="option1Label">Option 1</label>
+                <br><br>
+            </div>
+
+            <div class="button_column">
+                <!-- Button Pair 2 -->
+                <button id="pair2" style="width: 200px;height: 50px;">A-C</button>
+                <br>
+                <input type="radio" name="choice" value="option2" id="option2">
+                <label for="option2" id="option2Label">Option 2</label>
+                <br><br>
+            </div>
+
+            <div class="button_column">
+                <!-- Button Pair 3 -->
+                <button id="pair3" style="width: 200px; height: 50px;">B-C</button>
+                <br>
+                <input type="radio" name="choice" value="option3" id="option3">
+                <label for="option3" id="option3Label">Option 3</label>
+                <br><br>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

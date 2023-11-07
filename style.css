@@ -1,0 +1,41 @@
+  /* Center the content on the screen */
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* This will ensure the content stays centered vertically */
+    margin: 0;
+    flex-direction: column; /* Add this to stack the elements vertically */
+}
+
+.rect_container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px; /* Add spacing between the rectangles and buttons */
+}
+
+.rectangles {
+    border: 1px solid black;
+}
+
+.rec_text {
+    margin-right: 20px; /* Add spacing between the rectangles and buttons */
+}
+
+/* Add this CSS to style the .button_container */
+.button_container {
+    display: flex;
+}
+
+/* Add some margin to separate the columns */
+.button_column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Add some margin to separate the buttons and radio buttons */
+.button_column button,
+.button_column input[type="radio"] {
+    margin: 5px;
+}

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Att_24_multi_trial</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src = "tabclick copy.js"></script>
+    <script src="jquery-3.2.1.slim.min.js" ></script>
+    <script src='jquery_2.2.4_jquery.min.js'></script>
+    <script src="bootstrap.min.js" ></script>
+
+</head>
+<script>
+var jsonData = "";
+function save_data_json(f_name, dir, data) {
+  jQuery.ajax({type: 'post', cache: false, url: 'save_jquery.php',
+    data: {data_dir: dir,
+      file_name: f_name, // the file type should be added
+      exp_data: data }
+    });
+}
+
+function JSON_to_CSV(data_in_json) {
+  const items = data_in_json;
+  const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+  const header = Object.keys(items[0])
+  const csv = [
+  header.join(','), // header row first
+  ...items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+  ].join('\r\n')
+  // console.log("Converted to CSV file")
+  return csv;
+};
+
+  // Get the details from the json file and store in an array
+     // Declare the array outside the fetch function to make it accessible globally
+let rec_array = [];
+fetch('multi_trial_attraction_stimuli24.json')
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(data) {
+    // Store the JSON data in an array
+    rec_array = Array.isArray(data) ? data : [data];
+
+    // Perform operations with the array
+    // console.log("rec_array[0][2]: ",rec_array[0][2]);
+    // ... (do something with jsonArray)
+  })
+  .catch(function(error) {
+    // Handle any errors that occurred during the fetch
+    console.error('Error:', error);
+  });
+
+  function enterFullScreen() {
+    var element = document.documentElement; // Get the root element (usually <html>)
+
+    if (element.requestFullscreen) {
+      element.requestFullscreen(); // Standard syntax
+    } else if (element.mozRequestFullScreen) {
+      element.mozRequestFullScreen(); // Firefox-specific syntax
+    } else if (element.webkitRequestFullscreen) {
+      element.webkitRequestFullscreen(); // Chrome, Safari, and Opera-specific syntax
+    } else if (element.msRequestFullscreen) {
+      element.msRequestFullscreen(); // IE/Edge-specific syntax
+    }
+    instructions.style.display= "none";
+    rec_cont.style.display = "flex";
+    document.getElementById("progressBar").style.display = "block";
+    // recClickB4Limit();
+    updateStimuli();
+  }
+
+
+</script>
+
+<body>
+  <div id = consent>
+    <p style = "font-size: 20px;text-align: left "> Hi, Welcome to the main experiment. Find below the consent.</p>
+
+
+    <h2>Consent</h2>
+    <p style = "font-size: 20px;text-align: left ">
+      1.	I have run a few practice trials and I understand the instructions for the study. I have also been informed about the nature of the study. <br>
+      2.	I understand that my participation in this experiment is completely voluntary, and I am free to withdraw my consent any moment without any legal or Health rights being compromised. <br>
+      3.	I understand that my data will be used for research purposes and will be kept confidential; I shall not hinder in the usage of the data generated as a result of this experiment to be used for said research purposes. <br>
+      4.	I understand that my identity will not be disclosed in any information released or published to third parties. <br>
+      5.	The experiment shall take approximately 60 minutes and will be conducted in a single sitting. <br>
+      6.	I confirm that I am mentally and physically fit and under no coercion to give consent for participating in the study. <br>
+      <br><br>
+
+      Name of the Researcher: TAPAS RANJAN RATH <br>
+      Contact Number: 9665231234 <br>
+      Email ID: tapasr@iitk.ac.in <br>
+
+    </p>
+    <p style = "font-size: 20px;text-align: left "> Just to ensure that you have read the instructions before the main experiment, it will be displayed again in the next page. Please go through the instructions carefully.</p><br>
+     
+    <form id="userForm">
+      <label for="participantName">Participant Name:</label>
+      <input type="text" id="participantName" required><br><br>
+    
+      <label for="age">Age:</label>
+      <input type="number" id="age" required><br><br>
+    
+      <label for="gender">Gender:</label>
+      <input type="text" id="gender" required><br><br>
+    
+      <label for="educationLevel">Education Level:</label>
+      <input type="text" id="educationLevel" required><br><br>
+    
+      <label for="currentAddress">Current Address:</label>
+      <input type="text" id="currentAddress" required><br><br>
+    
+      <label for="contactNumber">Contact Number:</label>
+      <input type="tel" id="contactNumber" required><br><br>
+    
+      <label for="email">E-Mail ID:</label>
+      <input type="email" id="email" required><br><br>
+    
+      <input type="checkbox" id="i_consent" required>
+      <label for="i_consent">I consent</label><br><br>
+    
+      <!-- <button type="button"onclick="goToInstructions()">Start Experiment</button> -->
+      <button type="button" onclick="goToInstructions()" disabled id="startExp">Start Experiment</button>
+    </form>      
+</div>   
+  <div id = instructions>
+    <h2 >Instructions</h2>
+      <p>    Welcome to another cognitive science experiment! In this experiment, imagine that you have an internship with the government of a Spanish-speaking counrty. Your task is to assist in selecting lands meant for office buildings for a new secret-service department. The government values human judgment and wants you, as an intelligent resource, to make the decisions instead of relying on AI. <br><br>
+
+    Across multiple cities in the country, the government has listed several pieces of land for consideration. Each city will have multiple pairs or triplets of lands. Your job is to determine which land has the larger area. <br><br>
+    
+    On the screen, you will see rectangular representations of each piece of land. The rectangles are filled in black and labeled with the name of the current owner. You will always compare two rectangular lands at a time. To make your choice, simply click on the land with the larger area. <br><br>
+    
+    In some cases, you will be presented with three land options in a city. However, only the names of the owners will be displayed, not the rectangular lands themselves. If you need to review the pairs again before making your decision, you can click on the respective buttons located at the bottom left of the screen. Note that the buttons are active when their colour turn from yellow to green. <br><br>
+    
+    The number of cities you will visit is predetermined, and your progress will be shown by a progress bar located on the top of the screen. Once you have completed the selection process for one city, click the appropriate button to proceed to the next city. Repeat this process until you have covered all the designated cities. <br><br>
+    When you are ready to begin the trial, click the "Start" button below.</p> <br>
+    <button onclick="enterFullScreen()">Start</button>
+  </div>
+  <div id="progressBar">
+    <div id="progressBarText">Completion Progress: <span id="progressPercent">0%</span></div>
+    <div id="progressBarFill"></div>
+  </div>
+  <div class="container">
+    <div id="progressBar">
+        <div id="progressBarText">Completion Progress: <span id="progressPercent">0%</span></div>
+        <div id="progressBarFill"></div>
+    </div>
+
+    <div class="rect_container" id="rec_cont">
+        <div class="rectangles" id="rec1" style="width: 150px; height: 60px;"></div>
+        <div class="rectangles" id="rec2" style="width: 80px; height: 200px;"></div>
+        <div class="rectangles" id="rec3" style="width: 130px; height: 60px;"></div>
+    </div>
+    <div class="rec_text">
+        <div id="rec1_text"></div>
+        <div id="rec2_text"></div>
+        <div id="rec3_text"></div>
+        <div class="rec_text" id="mouseclick">Click on the rectangle with the bigger area</div>
+    </div>
+
+    <div class="button_container">
+        <div class="button_column">
+            <!-- Button Pair 1 -->
+            <button id="pair1" style="width: 150px;height: 50px;">A-B</button>
+            <br>
+            <input type="radio" name="choice" value="option1" id="option1">
+            <label for="option1" id="option1Label">A</label>
+            <br><br>
+        </div>
+
+        <div class="button_column">
+            <!-- Button Pair 2 -->
+            <button id="pair2" style="width: 150px;height: 50px;">A-C</button>
+            <br>
+            <input type="radio" name="choice" value="option2" id="option2">
+            <label for="option2" id="option2Label">B</label>
+            <br><br>
+        </div>
+
+        <div class="button_column">
+            <!-- Button Pair 3 -->
+            <button id="pair3" style="width: 150px; height: 50px;">B-C</button>
+            <br>
+            <input type="radio" name="choice" value="option3" id="option3">
+            <label for="option3" id="option3Label">C</label>
+            <br><br>
+        </div>
+    </div>
+    <p id="question">Among the three lands in the city, which land has the largest area?</p>
+        <button id="nextButton">Go to the next city</button>
+</div>
+    <div id="end">
+      The experiment is over. Thanks for your participation. You may now close the window.
+    </div>
+</body>
+
+<script>
+var pxRatio = window.devicePixelRatio;
+console.log("ratio of physical px to CSS px on yr device: ", pxRatio);
+// Get the radio buttons and the next button
+const radioButtons = document.querySelectorAll('input[name="choice"]');
+const nextButton = document.getElementById('nextButton');
+
+ // Add event listener to radio buttons for each trial
+ radioButtons.forEach((radio) => {
+    radio.addEventListener('change', updateNextButton);
+  });
+
+  function updateNextButton() {
+    // Check if any radio button is selected for all trials
+    const isAnySelected = Array.from(radioButtons).some((radio) => radio.checked);
+
+    // Enable or disable the next button based on selection
+    nextButton.disabled = !isAnySelected;
+  }
+  // Reset button state before each trial
+  function resetButtonState() {
+    nextButton.disabled = true;
+    radioButtons.forEach((radio) => {
+      radio.checked = false;
+    });
+  }
+  var rectangles = document.querySelectorAll('.rectangles');
+var buttons = document.querySelectorAll('.button_container button');
+buttons.forEach(function(button) {
+  button.addEventListener('click', function(event) {
+    var pairId = event.target.id;
+    removeActivation();
+    
+    if (pairId === 'pair1') {
+      activatePair('rec1', 'rec2');
+      activePair = ['rec1', 'rec2']; // Set the active pair
+    } else if (pairId === 'pair2') {
+      activatePair('rec1', 'rec3');
+      activePair = ['rec1', 'rec3']; // Set the active pair
+    } else if (pairId === 'pair3') {
+          activatePair('rec2', 'rec3');
+          activePair = ['rec2', 'rec3']; // Set the active pair
+    } 
+    buttons.forEach(function(button) {
+      button.disabled = true;
+    });
+  });
+});
+
+rectangles.forEach(function(rectangle) {
+  rectangle.addEventListener('click', function(event) {
+    if (activePair !== null && activePair.includes(rectangle.id)) {
+      buttons.forEach(function(button) {
+        button.disabled = false;
+        removeActivation();
+      });
+    }
+  });
+});
+
+function activatePair(rectangleId1, rectangleId2) {
+  var rectangle1 = document.getElementById(rectangleId1);
+  var rectangle2 = document.getElementById(rectangleId2);
+  
+  rectangle1.classList.add('clear_rec');
+  // console.log("rec1ClassList: ", rectangle1.classList);
+  rectangle2.classList.add('clear_rec');
+  // console.log("rec2ClassList: ", rectangle2.classList);
+}
+
+function removeActivation() {
+  rectangles.forEach(function(rectangle) {
+    rectangle.classList.remove('clear_rec');
+    // console.log("recClassList: ", rectangle.classList);
+  });
+}
+
+
+// Get the progress bar elements
+var progressBarFill = document.getElementById('progressBarFill');
+var progressPercentText = document.getElementById('progressPercent');
+
+// Function to update the progress bar based on currentTrial
+function updateProgressBar(currentTrial) {
+  var recArraySize = rec_array.length;
+  var progressPercent = (currentTrial / recArraySize) * 100;
+  // console.log("progressPercent", progressPercent);
+  progressBarFill.style.width = progressPercent + '%';
+  progressPercentText.textContent = progressPercent.toFixed(0) + '%';
+}
+
+// Usage example: updateProgressBar(currentTrial);
+
+
+var consent = document.getElementById("consent");
+
+var instructions= document.getElementById("instructions");
+var rec_cont = document.getElementById("rec_cont");
+
+const consentCheckbox = document.getElementById("i_consent");
+const startExp = document.getElementById("startExp");
+
+consentCheckbox.addEventListener("change", function() {
+  startExp.disabled = !consentCheckbox.checked;
+});
+var rectangles = document.querySelectorAll('.rectangles');
+
+
+
+function goToInstructions(){
+  // console.log("goToInstructions");
+  consent.style.display = "none";
+  instructions.style.display = "block";
+}
+
+// Reset the radio button input
+function resetInput() {
+  document.getElementById("option1").checked = false;
+  document.getElementById("option2").checked = false;
+  document.getElementById("option3").checked = false;
+}
+
+// Fisher-Yates shuffle algorithm
+function shuffleArray(array) { 
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+
+
+
+// Accessing the selected radio button value
+var radios = document.getElementsByName('choice');
+var biggest_rec;
+
+for (var i = 0; i < radios.length; i++) {
+  radios[i].addEventListener('change', function() {
+    biggest_rec = this.value;
+  });
+}
+
+// Check if any radio button is initially selected
+var selectedRadio = document.querySelector('input[name="choice"]:checked');
+if (selectedRadio) {
+  biggest_rec = selectedRadio.value;
+}
+
+
+events = [] // 
+
+function saveEventDetails(currentTrial, stimulus, trial_type, eventType, elementId, timestamp, target, response) {
+  // Create an object to hold the event details
+  const eventDetails = {
+    currentTrial: currentTrial,
+    stimulus: stimulus,
+    trial_type: trial_type,
+    eventType: eventType,
+    elementId: elementId,
+    timestamp: timestamp,
+    target: target,
+    response: response
+  };
+  // console.log(eventDetails);
+  // Push the event details to the events array
+  events.push(eventDetails);
+}
+
+var filename = '';
+function saveToJSON() {
+  // Create an object to hold the user details
+  var userDetails = {
+    participantName: document.getElementById('participantName').value,
+    email: document.getElementById('email').value,
+    age: document.getElementById('age').value,
+    contactNumber: document.getElementById('contactNumber').value,
+    gender: document.getElementById('gender').value,
+    educationLevel: document.getElementById('educationLevel').value,
+    currentAddress: document.getElementById('currentAddress').value,
+    devicePixelRatio: pxRatio,
+    // Add more fields as needed
+  };
+
+  // Create an object to hold the final data
+  var data = {
+    userDetails: userDetails,
+    events: events
+  };
+
+  // Convert the data object to JSON
+  jsonData = JSON.stringify(data);
+  // console.log("Tapas Marker")
+  filename = userDetails.participantName + '_' + userDetails.contactNumber + '_24.json';
+  save_data_json(filename,"server_logs/",jsonData);
+  // console.log(jsonData);
+
+ }
+
+ function downloadJSON(jsonData, filename) {
+  
+  // Create a new Blob object with the JSON string
+  const blob = new Blob([jsonData], { type: 'application/json' });
+
+  // Create a temporary anchor element
+  const anchor = document.createElement('a');
+
+  // Set the anchor's attributes
+  anchor.href = URL.createObjectURL(blob);
+  anchor.download = filename;
+
+  // Programmatically trigger a click event on the anchor element
+  anchor.click();
+
+  // Clean up the temporary anchor element
+  URL.revokeObjectURL(anchor.href);
+}
+
+
+
+let target, d_height, d_name, d_width, target_name, trial_type, x_height, x_name, x_width, y_height, y_name, y_width;
+let Stimulus;
+
+// Get the specific rectangle elements
+const rec1 = document.getElementById('rec1');
+const rec2 = document.getElementById('rec2');
+
+// Get the tab_container elements
+var tabContainer = document.querySelector('.tab_container');
+var rec1Width,rec1Height,rec2Width,rec2Height,rec3Width,rec3Height,rec1name,rec2name,rec3name,currentStimuli,last_stimuli,next_stimuli,stim_pos,response, userid;
+// currentStimuli = ['x', 'y', 'd'].sort(() => Math.random() - 0.5);
+currentStimuli = shuffleArray(['x', 'y', 'd']);
+var currentTrial = 0;
+// var currentStimulus = 0;
+var recTab = document.createElement('div');
+var progressPercent = (currentTrial / rec_array.length) * 100;
+// console.log("prog.bar", progressPercent)
+// updateProgressBar(currentTrial);
+var clickedElementId;
+
+var rectangles = document.querySelectorAll('.rectangles');
+
+
+function updateStimuli() {
+    rec1Width = rec_array[currentTrial][currentStimuli[0] + '_width'];
+    rec1Height = rec_array[currentTrial][currentStimuli[0] + '_height'];
+    rec2Width = rec_array[currentTrial][currentStimuli[1] + '_width'];
+    rec2Height = rec_array[currentTrial][currentStimuli[1] + '_height'];
+    rec1name = rec_array[currentTrial][currentStimuli[0] + '_name'];
+    rec2name = rec_array[currentTrial][currentStimuli[1] + '_name'];
+    rec3name = rec_array[currentTrial][currentStimuli[2] + '_name'];
+    rec3Width = rec_array[currentTrial][currentStimuli[2] + '_width'];
+    rec3Height = rec_array[currentTrial][currentStimuli[2] + '_height'];
+    
+    x_width = rec_array[currentTrial]['x_width'];
+    x_height = rec_array[currentTrial]['x_height']; 
+    y_width = rec_array[currentTrial]['y_width'];
+    y_height = rec_array[currentTrial]['y_height'];
+    d_width = rec_array[currentTrial]['d_width'];
+    d_height = rec_array[currentTrial]['d_height'];
+    target = rec_array[currentTrial]['target'];
+
+    rec1.style.width = rec1Width + 'px';
+    rec1.style.height = rec1Height + 'px';
+    rec2.style.width = rec2Width + 'px';
+    rec2.style.height = rec2Height + 'px';
+    rec3.style.width = rec3Width + 'px';
+    rec3.style.height = rec3Height + 'px';
+
+    // Calculate the random position within the range of -20px to 20px
+    const randomPosition = Math.floor(Math.random() * 41) - 20;
+
+    // Apply the random position to the second rectangle
+    rec2.style.marginTop = randomPosition + 'px';
+    rec3.style.marginTop = Math.floor(Math.random() * 41) - 20 + 'px';
+    // Get the new elements for displaying the names
+    const rec1Text = document.getElementById('rec1_text');
+    const rec2Text = document.getElementById('rec2_text');
+    const rec3Text = document.getElementById('rec3_text');
+    // Set the text content of the new elements
+    rec1Text.textContent = rec1name + '-' + currentStimuli[0] + '_' + rec_array[currentTrial]['trial_type'];
+    rec2Text.textContent = rec2name   + '-' + currentStimuli[1] + '_' + currentStimuli + '_' + target;
+    rec3Text.textContent = rec3name + '-' + currentTrial ;
+}
+
+
+function recClick() {
+  
+    // Get the ID of the clicked element
+    clickedElementId = this.id;
+   
+    if (typeof clickedElementId!== 'undefined') {
+      console.log("clickedElement", clickedElementId);
+      // break;
+    } else {
+      clickedElementId = '00000';
+      // console.log("clickedElement", clickedElementId);
+    }
+
+   
+    var timestamp = Date.now();
+    rec1Width = rec_array[currentTrial][currentStimuli[0] + '_width'];
+    rec1Height = rec_array[currentTrial][currentStimuli[0] + '_height'];
+    rec2Width = rec_array[currentTrial][currentStimuli[1] + '_width'];
+    rec2Height = rec_array[currentTrial][currentStimuli[1] + '_height'];
+    rec1name = rec_array[currentTrial][currentStimuli[0] + '_name'];
+    rec2name = rec_array[currentTrial][currentStimuli[1] + '_name'];
+    rec3name = rec_array[currentTrial][currentStimuli[2] + '_name'];
+    rec3Width = rec_array[currentTrial][currentStimuli[2] + '_width'];
+    rec3Height = rec_array[currentTrial][currentStimuli[2] + '_height'];
+    
+    x_width = rec_array[currentTrial]['x_width'];
+    x_height = rec_array[currentTrial]['x_height']; 
+    y_width = rec_array[currentTrial]['y_width'];
+    y_height = rec_array[currentTrial]['y_height'];
+    d_width = rec_array[currentTrial]['d_width'];
+    d_height = rec_array[currentTrial]['d_height'];
+    target = rec_array[currentTrial]['target'];
+
+    Stimulus = [x_width, x_height, y_width, y_height, d_width, d_height, target];
+    // Create a new element
+    // recTab = document.createElement('div');
+    // recTab.id = next_stimuli[0] + '-' + next_stimuli[1]; // Assign the ID
+    // recTab.className = 'tabobj'; // Assign the class name
+    // recTab.textContent = rec1name + '-' + rec2name ; // Set the text content as the ID
+    // tabContainer.appendChild(recTab); // Append the new element to the container
+
+    // console.log("currentStimulus: ", currentStimulus,
+    //   "currentStimuli: ", currentStimuli,
+    //   "last_stimuli: ", last_stimuli,
+    //   "clickedElement: ", clickedElementId,
+    //   "stim_pos: ", stim_pos,
+    //   "target: ",target,
+    //   "response: ", response);
+
+  
+    // Change the style properties of the specific rectangles
+    rec1.style.width = rec1Width + 'px';
+    rec1.style.height = rec1Height + 'px';
+    rec2.style.width = rec2Width + 'px';
+    rec2.style.height = rec2Height + 'px';
+    rec3.style.width = rec3Width + 'px';
+    rec3.style.height = rec3Height + 'px';
+    // rec1.textContent = rec1name;
+    // rec2.textContent = rec2name;
+
+    // Get the new elements for displaying the names
+    const rec1Text = document.getElementById('rec1_text');
+    const rec2Text = document.getElementById('rec2_text');
+    const rec3Text = document.getElementById('rec3_text');
+    // Set the text content of the new elements
+    rec1Text.textContent = rec1name + '-' + currentStimuli[0] + '_' + rec_array[currentTrial]['trial_type'];
+    rec2Text.textContent = rec2name   + '-' + currentStimuli[1] + '_' + currentStimuli + '_' + target;
+    rec3Text.textContent = rec3name ;
+    // Increment the counter and wrap around if it exceeds the array length
+    currentStimulus = (currentStimulus + 1) % 3;
+
+    // Save the event details
+    saveEventDetails(currentTrial, last_stimuli, rec_array[currentTrial]['trial_type'], 'recClickB4Limit', clickedElementId, timestamp, target, response);
+    // slider.value = 50; // Reset the slider value to the default value
+    // output.innerHTML = slider.value; // Update the displayed value
+
+    
+    // Add a click event listener to the new element
+    recTab.addEventListener('click', handleTabClick);
+  }
+
+
+
+
+
+function handleNext() {
+    resetInput();
+    currentTrial++;
+    activatePair('rec1','rec2');
+    activatePair('rec3','rec2');
+
+    setTimeout(function() {
+        removeActivation();
+    }, 20);
+    clickedElementId = this.id;
+    // console.log("clickedElement", currentStimuli[clickedElementId[3]]);
+    // Get the current timestamp
+    timestamp = Date.now();
+    response = currentStimuli[(biggest_rec[6])-1];
+    updateStimuli();
+    saveEventDetails(currentTrial, currentStimuli, rec_array[currentTrial]['trial_type'],'handleNext', clickedElementId, timestamp, target, response);
+
+    
+    updateProgressBar(currentTrial);
+
+    // Reset the counter 
+    currentStimulus = 0;
+    // currentStimuli = ['x', 'y', 'd'].sort(() => Math.random() - 0.5);
+    currentStimuli = shuffleArray(['x', 'y', 'd']);
+    // Call resetButtonState to set initial state
+    resetButtonState();
+    // Add this code inside the handleNext() function when all trials are completed
+    if (currentTrial >= rec_array.length) {
+      // End of trials
+      // console.log('End of trials');
+      // Code for handling end of trials
+      document.getElementById("three_rectangles").style.display = "none";
+      document.getElementById("end").style.display = "block";
+
+      // Save event timings for the last trial
+      // saveEventDetails();
+
+      // Save all event timings and user details to "results.json"
+      saveToJSON();
+      downloadJSON(jsonData, filename);
+      return;
+    }
+
+}
+
+// const nextButton = document.getElementById('nextButton');
+nextButton.addEventListener('click', handleNext);
+
+
+
+
+</script>
+</html>
+

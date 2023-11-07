@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Att_24_Perceptual_Calibration</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src='https://unpkg.com/simple-statistics@7.8.2/dist/simple-statistics.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        } */
+        body {
+            margin: 0; /* Remove default body margin */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* Set body height to full viewport height */
+        }
+        .rectangle {
+            margin-bottom: 20px;
+            width: 200px; /* Set a default width for rectangles */
+            height: 100px; /* Set a default height for rectangles */
+            background-color: black; /* Set a default background color for rectangles */
+            cursor: pointer; /* Change cursor to pointer for interaction */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="rectangle" id="leftRectangle"></div>
+        <div class="rectangle" id="rightRectangle"></div>
+    </div>
+
+    <script>
+        var dataPoints = [];
+        var rec_array = [];
+
+        // Fisher-Yates shuffle algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        $(document).ready(function() {
+            // Fetch JSON data
+            $.getJSON('stimuli5.json', function(data) {
+                rec_array = Array.isArray(data) ? data : [data];
+                updateTrial();
+            });
+
+            function updateTrial() {
+                var currentTrial = rec_array.shift();
+                if (currentTrial) {
+                    var w = currentTrial.w;
+                    var h = currentTrial.h;
+                    var area1 = w * h;
+                    var ar1 = w / h;
+
+                    var ar2 = h / w ;
+                    var t = area1*0.05;
+                    var area2 = area1 + Math.floor(Math.random() * 2*t) - t;
+                    area2 = Math.max(area1 - t, Math.min(area1 + t, area2));
+
+                    var leftRectangle = $('#leftRectangle');
+                    var rightRectangle = $('#rightRectangle');
+
+                    // Update left rectangle
+                    leftRectangle.css('width', w + 'px');
+                    leftRectangle.css('height', h + 'px');
+
+                    // Update right rectangle
+                    rightRectangle.css('width', Math.sqrt(area2 * ar2) + 'px');
+                    rightRectangle.css('height', Math.sqrt(area2 / ar2) + 'px');
+
+                    // Handle click event on rectangles
+                    leftRectangle.off('click').on('click', function() {
+                        // Participant clicked on the left rectangle
+                        // Implement 1-up-2-down logic here
+                        ar2 -= 0.02; // Decrease aspect ratio for next trial
+                        nextTrial();
+                    });
+
+                    rightRectangle.off('click').on('click', function() {
+                        // Participant clicked on the right rectangle
+                        // Implement 1-up-2-down logic here
+                        ar2 += 0.02; // Increase aspect ratio for next trial
+                        nextTrial();
+                    });
+
+                    function nextTrial() {
+                        // Call updateTrial function recursively for the next trial
+                        setTimeout(updateTrial, 500); // Wait for 500ms before moving to the next trial
+                    }
+                } else {
+                    alert('Experiment completed!');
+                    console.log('Data Points:', dataPoints);
+                    // Calculate correlation coefficient
+                    var correlation = ss.sampleCorrelation(
+                        dataPoints.map(point => point.ar1),
+                        dataPoints.map(point => point.interpolatedAr2)
+                    );
+                    console.log('Correlation Coefficient:', correlation);
+                    timestamp = Date.now();
+                    downloadJSON(dataPoints, timestamp + '.json');
+                }
+            }
+        });
+
+        function downloadJSON(data, filename) {
+            jsonData = JSON.stringify(data);
+            // Create a new Blob object with the JSON string
+            const blob = new Blob([jsonData], { type: 'application/json' });
+
+            // Create a temporary anchor element
+            const anchor = document.createElement('a');
+
+            // Set the anchor's attributes
+            anchor.href = URL.createObjectURL(blob);
+            anchor.download = filename;
+
+            // Programmatically trigger a click event on the anchor element
+            anchor.click();
+
+            // Clean up the temporary anchor element
+            URL.revokeObjectURL(anchor.href);
+        }
+    </script>
+</body>
+
+</html>

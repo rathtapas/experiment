@@ -1,0 +1,227 @@
+h1{
+    color: red;
+}
+/* the tab object rectangles at the bottomof the screen */
+.tabobj {
+background-color:yellow;
+border:5px solid black;
+width: 150px;
+height: 50px;
+text-align: center;
+font-size: 16px;
+padding: 5px;
+}
+
+
+
+.tabobj:hover {
+opacity: .6; /* reduces opacity on mouse-over */
+}
+
+/*.slidecontainer {
+width: 50%; /* Width of the outside container */
+/* The slider itself */
+/* .slider {
+/* display: none; */
+/* -webkit-appearance: none;  /* Override default CSS styles */
+/* appearance: none;
+width: 50%; /* Full-width */
+/* height: 25px; /* Specified height */
+/* background: #d3d3d3; /* Grey background */
+/* outline: none; Remove outline */
+/* opacity: 0.7; Set transparency (for mouse-over effects on hover) */
+/* -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+/* transition: opacity .2s; */ */
+/* } */ */ */ */
+
+/* Mouse-over effects */
+/* .slider:hover { */
+/* opacity: 1; Fully shown on mouse-over */
+/* } */ */ */
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+/* .slider::-webkit-slider-thumb {
+-webkit-appearance: none; /* Override default look */
+/* appearance: none; */
+/* width: 25px; Set a specific slider handle width */
+/* height: 25px; Slider handle height */
+/* background: #04AA6D; Green background */
+/* cursor: pointer; Cursor on hover */
+/* } */ */
+
+/* .slider::-moz-range-thumb {
+width: 25px; /* Set a specific slider handle width */
+/* height: 25px; Slider handle height */
+/* background: #04AA6D; Green background */
+/* cursor: pointer; Cursor on hover */
+/* } */ */
+
+#consent {
+    position: absolute;
+    display: block;
+    grid-template-rows: auto auto;
+    margin-top: 100px; /* Add margin to create space below the rectangles */
+    width: 100%;
+    /* left: 5% */
+    /* font-size:50px; */
+}
+#instructions {
+    display: none;
+    text-align: justify;
+    font-size: 20px !important; /* Increase the font size to 20 pixels */
+}
+
+
+
+#end {
+    position: absolute;
+    display: none;
+    grid-template-rows: auto auto;
+    margin-top: 250px; /* Add margin to create space below the rectangles */
+    width: 80%;
+    left: 40%
+    /* font-size:50px; */
+}
+#end {
+    
+    font-size: 20px !important; /* Increase the font size to 20 pixels */
+}
+
+    .container {
+      /* position: relative; */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; /* This will ensure the content stays centered vertically */
+      margin: 0;
+      /* overflow: hidden; Add this to prevent content overflow */
+    }
+
+
+  
+      .rec_text {
+        display: block;
+        position: absolute;
+        width: 100%; /* Make the elements span the entire width of the container */
+        font-size: 20px;
+      }
+      
+      #rec1_text {
+        display:flex;
+        top: 300px; /* Adjust the top value to position rec1_text */
+        left: 5%;
+      }
+      
+      #rec2_text {
+        top: 350px; /* Adjust the top value to position rec2_text */
+        left: 5%;
+      }
+      
+      #rec3_text {
+        top: 360px; /* Adjust the top value to position rec3_text */
+        left: 5%;
+      }
+      
+
+      #mouseclick {
+        top: 400px;
+        left: 5%;
+      }
+      
+  /* Center the content on the screen */
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* This will ensure the content stays centered vertically */
+    margin: 0;
+    flex-direction: column; /* Add this to stack the elements vertically */
+}
+
+/* Add this CSS to style the .button_container */
+.button_container {
+    display: flex;
+    justify-content: space-between;
+    width: 500px; /* Use fixed width in pixels */
+    margin-top: 20px; /* Add spacing between rectangles and buttons */
+}
+
+/* Add some margin to separate the columns */
+.button_column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Add some margin to separate the buttons and radio buttons */
+.button_column button,
+.button_column input[type="radio"] {
+    margin: 5px;
+}
+
+/* Styles for rectangles and text */
+.rect_container {
+    display: flex;
+    justify-content: space-between;
+    width: 500px; /* Use fixed width in pixels */
+    margin-top: 20px; /* Add spacing between the rectangles and text */
+}
+
+.rectangles {
+    position: relative;
+    background-color: black;
+    border: 5px solid black;
+    margin-right: 20px;
+    text-align: center;
+    font-size: 16px;
+    padding: 5px;
+    color: yellow;
+    filter: blur(30px);
+    opacity: 0.5;
+}
+
+.rectangles.clear_rec {
+    filter: blur(0px);
+    opacity: 1;
+}
+
+.rectangles:hover {
+    background-color: grey;
+    border: 5px solid grey;
+}
+
+.rec_text {
+    display: none;
+    width: 500px; /* Use fixed width in pixels */
+    font-size: 20px;
+    margin-top: 20px; /* Add spacing between the rectangles and text */
+}
+
+#progressBar {
+    display: none;
+    width: 100%;
+    background-color: #f2f2f2;
+    border: 1px solid #ddd;
+    height: 30px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+#progressBarText {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    font-weight: bold;
+}
+
+#progressPercent {
+    margin-left: 5px;
+}
+
+#progressBarFill {
+    height: 100%;
+    background-color: #4CAF50;
+    width: 0;
+    transition: width 0.3s ease-in-out;
+}

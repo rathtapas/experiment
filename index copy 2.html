@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Att_24_Perceptual_Calibration</title>
+  <script src="jquery-3.2.1.slim.min.js" ></script>
+  <script src='jquery_2.2.4_jquery.min.js'></script>
+  <script src="bootstrap.min.js" ></script>
+  <style>
+    /* Add your CSS styles here for the rectangles and slider */
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .rectangle {
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+
+<body>
+<div class="container">
+    <div class="rectangle" id="leftRectangle"></div>
+    <div class="rectangle" id="rightRectangle"></div>
+    <input type="range" id="slider" min="0" max="1" step="0.01">
+    <button id="nextButton">Next</button>
+</div>
+
+<!-- <script src="path/to/random.min.js"></script> -->
+	<script>
+    var rec_array = [];
+
+    fetch('multi_trial_attraction_stimuli24.json')
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        // Store the JSON data in an array
+        rec_array = Array.isArray(data) ? data : [data];
+
+        // Perform operations with the array
+        // console.log("rec_array[0][2]: ",rec_array[0][2]);
+        // ... (do something with jsonArray)
+      })
+      .catch(function(error) {
+        // Handle any errors that occurred during the fetch
+        console.error('Error:', error);
+      });
+  
+    function enterFullScreen() {
+      var element = document.documentElement; // Get the root element (usually <html>)
+
+      if (element.requestFullscreen) {
+        element.requestFullscreen(); // Standard syntax
+      } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen(); // Firefox-specific syntax
+      } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen(); // Chrome, Safari, and Opera-specific syntax
+      } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen(); // IE/Edge-specific syntax
+      }
+      // instructions.style.display= "none";
+      container.style.display = "flex";
+      document.getElementById("progressBar").style.display = "block";
+      // recClickB4Limit();
+      // updateStimuli();
+    }
+    const random = require('random');
+
+function generateRandomFromNormalDistribution(mean, sd) {
+    return random.normal(mean, sd)();
+}
+
+var rec_array = [
+    {"trial_no": 1, "w": 80, "h": 90},
+    {"trial_no": 2, "w": 75, "h": 85},
+    {"trial_no": 3, "w": 92, "h": 78},
+    {"trial_no": 4, "w": 80, "h": 72},
+    {"trial_no": 5, "w": 74, "h": 86}
+];
+
+var currentTrialIndex = 0;
+var currentTrial = rec_array[currentTrialIndex];
+var w = currentTrial.w;
+var h = currentTrial.h;
+var area1 = w * h;
+var ar1 = w / h;
+
+var mean = 0.01;
+var sd = 0.001;
+var c = generateRandomFromNormalDistribution(mean, sd);
+
+var ar2 = h / w + c;
+var area2 = area1 + Math.floor(Math.random() * 200) - 100;
+area2 = Math.max(area1 - 100, Math.min(area1 + 100, area2));
+
+// Create HTML elements
+var leftRectangle = document.createElement('div');
+leftRectangle.style.width = w + 'px';
+leftRectangle.style.height = h + 'px';
+leftRectangle.style.backgroundColor = 'blue';
+
+var rightRectangle = document.createElement('div');
+rightRectangle.style.width = Math.sqrt(area2 * ar2) + 'px';
+rightRectangle.style.height = (Math.sqrt(area2 / ar2)) + 'px';
+rightRectangle.style.backgroundColor = 'red';
+
+var slider = document.createElement('input');
+slider.type = 'range';
+slider.min = '0';
+slider.max = '1';
+slider.step = '0.01';
+
+var nextButton = document.createElement('button');
+nextButton.textContent = 'Next';
+document.addEventListener("DOMContentLoaded", function() {
+    var container = document.querySelector('.container'); // Query the container element
+    // Append elements to the container instead of the body
+    container.appendChild(leftRectangle);
+    container.appendChild(rightRectangle);
+    container.appendChild(slider);
+    container.appendChild(nextButton);
+
+    // Handle slider and button events
+    slider.addEventListener('input', function() {
+        var sliderValue = parseFloat(slider.value);
+        var adjustedWidth = Math.sqrt(area2 * ar2) * sliderValue;
+        rightRectangle.style.width = adjustedWidth + 'px';
+    });
+  nextButton.addEventListener('click', function() {
+    currentTrialIndex++;
+    if (currentTrialIndex < rec_array.length) {
+        currentTrial = rec_array[currentTrialIndex];
+        w = currentTrial.w;
+        h = currentTrial.h;
+        area1 = w * h;
+        ar1 = w / h;
+
+        c = generateRandomFromNormalDistribution(mean, sd);
+
+        ar2 = h / w + c;
+        area2 = area1 + Math.floor(Math.random() * 200) - 100;
+        area2 = Math.max(area1 - 100, Math.min(area1 + 100, area2));
+
+        leftRectangle.style.width = w + 'px';
+        leftRectangle.style.height = h + 'px';
+
+        rightRectangle.style.width = Math.sqrt(area2 * ar2) + 'px';
+        rightRectangle.style.height = (Math.sqrt(area2 / ar2)) + 'px';
+    } else {
+        alert('Experiment completed!');
+    }
+  })
+});
+
+    </script>
+</body>
+</html>
+

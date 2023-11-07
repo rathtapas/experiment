@@ -1,0 +1,69 @@
+[
+      [{
+        "rec_name": "A",
+        "rec_width": 100,
+        "rec_height": 50
+      },
+      {
+        "rec_name": "B",
+        "rec_width": 50,
+        "rec_height": 100
+      },
+      {
+        "rec_name": "C",
+        "rec_width": 90,
+        "rec_height": 50
+      }
+    ],
+
+    [
+      {
+        "rec_name": "P",
+        "rec_width": 40,
+        "rec_height": 90
+      },
+      {
+        "rec_name": "Q",
+        "rec_width": 60,
+        "rec_height": 100
+      },
+      {
+        "rec_name": "R",
+        "rec_width": 90,
+        "rec_height": 50
+      }
+    ],
+    [{
+        "rec_name": "X",
+        "rec_width": 80,
+        "rec_height": 50
+      },
+      {
+        "rec_name": "Y",
+        "rec_width": 100,
+        "rec_height": 200
+      },
+      {
+        "rec_name": "Z",
+        "rec_width": 50,
+        "rec_height": 80
+      }
+    ],
+    [{
+        "rec_name": "R",
+        "rec_width": 70,
+        "rec_height": 60
+      },
+      {
+        "rec_name": "S",
+        "rec_width": 60,
+        "rec_height": 80
+      },
+      {
+        "rec_name": "T",
+        "rec_width": 60,
+        "rec_height": 90
+      }
+    ]
+  ]
+  

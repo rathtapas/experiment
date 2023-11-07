@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Att_24_Perceptual_Calibration</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .rectangle {
+            margin-bottom: 20px;
+            width: 200px; /* Set a default width for rectangles */
+            height: 100px; /* Set a default height for rectangles */
+            background-color: lightblue; /* Set a default background color for rectangles */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="rectangle" id="leftRectangle"></div>
+        <div class="rectangle" id="rightRectangle"></div>
+        <input type="range" id="slider" min="0" max="1" step="0.01">
+        <button id="nextButton">Next</button>
+    </div>
+
+    <script>
+        var rec_array = [];
+
+        $(document).ready(function() {
+            // Fetch JSON data
+            $.getJSON('stimuli5.json', function(data) {
+                rec_array = Array.isArray(data) ? data : [data];
+                updateTrial();
+            });
+            var slider = $('#slider');
+
+            // Set the initial value of the slider to 0.5 (50%)
+            slider.val(0.5);
+            function updateTrial() {
+                var currentTrial = rec_array.shift();
+                if (currentTrial) {
+                    var w = currentTrial.w;
+                    var h = currentTrial.h;
+                    var area1 = w * h;
+                    var ar1 = w / h;
+
+                    var mean = 0.01;
+                    var sd = 0.001;
+                    var c = generateRandomFromNormalDistribution(mean, sd);
+
+                    var ar2 = h / w + c;
+                    var area2 = area1 + Math.floor(Math.random() * 200) - 100;
+                    area2 = Math.max(area1 - 100, Math.min(area1 + 100, area2));
+
+                    var leftRectangle = $('#leftRectangle');
+                    var rightRectangle = $('#rightRectangle');
+                    var slider = $('#slider');
+
+                    // Update left rectangle
+                    leftRectangle.css('width', w + 'px');
+                    leftRectangle.css('height', h + 'px');
+
+                    // Update right rectangle
+                    rightRectangle.css('width', Math.sqrt(area2 * ar2) + 'px');
+                    rightRectangle.css('height', Math.sqrt(area2 / ar2) + 'px');
+
+                    slider.val(0.5); // Reset slider position
+
+
+                    // Handle slider input event
+                    slider.off('input').on('input', function() {
+                        var sliderValue = parseFloat(slider.val());
+
+                        // Calculate the adjusted aspect ratio based on slider position
+                        // For example, reducing ar2 when slider moves left and increasing it when moved right
+                        var minAr2 = 0.5; // Minimum aspect ratio
+                        var maxAr2 = 2.0; // Maximum aspect ratio
+
+                        // Interpolate aspect ratio between minAr2 and maxAr2 based on slider value
+                        var interpolatedAr2 = minAr2 + sliderValue * (maxAr2 - minAr2);
+
+                        // Update right rectangle's width and height based on the new aspect ratio
+                        var adjustedWidth = Math.sqrt(area2 * interpolatedAr2);
+                        var adjustedHeight = Math.sqrt(area2 / interpolatedAr2);
+                        rightRectangle.css('width', adjustedWidth + 'px');
+                        rightRectangle.css('height', adjustedHeight + 'px');
+                    });
+                    // Handle next button click event
+                    $('#nextButton').off('click').on('click', function() {
+                        updateTrial();
+                    });
+                } else {
+                    alert('Experiment completed!');
+                }
+            }
+
+            function generateRandomFromNormalDistribution(mean, sd) {
+                var u = 0,
+                    v = 0;
+                while (u === 0) u = Math.random(); // Converting [0,1) to (0,1)
+                while (v === 0) v = Math.random();
+                var num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+                return num * sd + mean;
+            }
+        });
+    </script>
+</body>
+
+</html>

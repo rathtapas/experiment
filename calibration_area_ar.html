@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Att_24_Perceptual_Calibration</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src='https://unpkg.com/simple-statistics@7.8.2/dist/simple-statistics.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        } */
+        body {
+            margin: 0; /* Remove default body margin */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* Set body height to full viewport height */
+        }
+        .rectangle {
+            margin-bottom: 20px;
+            width: 200px; /* Set a default width for rectangles */
+            height: 100px; /* Set a default height for rectangles */
+            background-color: black; /* Set a default background color for rectangles */
+        }
+     
+        .container {
+            position: fixed;
+            display: flex;
+            align-items: flex-end;
+            height: 100px; /* Set a fixed height for the container */
+            width: 100%; /* Set width to 100% */
+            justify-content: center; /* Center the content horizontally */
+        }
+
+        .rectangle {
+            height: 100px;
+            width: 50px;
+            margin-right: 20px;
+        }
+                #leftRectangle {
+            position: absolute; /* Set the left rectangle to be positioned absolutely */
+            margin-left: -300px; /* Set the left margin for the left rectangle */
+        }
+
+        #rightRectangle {
+            position: absolute;
+            margin-left: 300px; /* Set the right margin for the right rectangle */
+        }
+        #sliderContainer {
+            margin-top: 400px; /* Set a fixed margin-top to keep the slider in a fixed vertical position */
+            position: fixed; /* Set the position to fixed */
+            top: 0; /* Align the slider container to the top of the viewport */
+            width: 100%; /* Set the width to 100% to span the entire viewport */
+            background-color: white; /* Set a background color to cover underlying content */
+            z-index: 1; /* Ensure the slider container appears above other elements */
+            margin-left: 900px;
+        }
+
+        #slider {
+            width: 300px; /* Set a fixed width for the slider */
+            margin: 0 auto; /* Center the slider horizontally within the fixed container */
+        }
+        /* Add these styles to your existing CSS */
+        .vertical-slider {
+            /* Rotate the slider vertically */
+            transform: rotate(-90deg);
+            /* Set width and height according to your design */
+            width: 200px;
+            height: 20px;
+            /* Adjust styles as needed */
+            /* Add styles for track and thumb */
+        }
+
+     /* Update the CSS for the aspect ratio container and text */
+        #aspectRatioContainer {
+            position: fixed;
+            top: 20px; /* Adjust the top position as needed */
+            right: 20px; /* Adjust the right position as needed */
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .aspect-ratio-text {
+            margin: 5px 0;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="rectangle" id="leftRectangle"></div>
+        <div class="rectangle" id="rightRectangle"></div>
+    </div>
+
+    <div id="sliderContainer">
+        <input type="range" id="slider" min="0" max="1" step="0.005">
+        <p>Left area: <span id="leftArea"></span></p>
+        <p>Right area: <span id="rightArea"></span></p>
+        <button id="nextButton">Next</button>
+    </div>
+    <div id="aspectRatioContainer">
+        <p>Left ar: <span id="leftAspectRatio"></span></p>
+        <p>Right ar: <span id="rightAspectRatio"></span></p>
+        <input type="range" class="vertical-slider" min="0" max="1" step="0.01" value=".5">
+
+    </div>
+    
+
+    <script>
+        var dataPoints = [];
+        var rec_array = [];
+        // Fisher-Yates shuffle algorithm
+        function shuffleArray(array) { 
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        function downloadJSON(data, filename) {
+            jsonData = JSON.stringify(data)
+            // Create a new Blob object with the JSON string
+            const blob = new Blob([jsonData], { type: 'application/json' });
+
+            // Create a temporary anchor element
+            const anchor = document.createElement('a');
+
+            // Set the anchor's attributes
+            anchor.href = URL.createObjectURL(blob);
+            anchor.download = filename;
+
+            // Programmatically trigger a click event on the anchor element
+            anchor.click();
+
+            // Clean up the temporary anchor element
+            URL.revokeObjectURL(anchor.href);
+            }
+
+        $(document).ready(function() {
+            // Fetch JSON data
+            $.getJSON('stimuli5.json', function(data) {
+                rec_array = Array.isArray(data) ? data : [data];
+                updateTrial();
+            });
+            var slider = $('#slider');
+            // rec_array = shuffleArray(rec_array);
+            // Set the initial value of the slider to 0.5 (50%)
+            slider.val(0.5);
+            var vslider = $('.vertical-slider');
+            vslider.val(0.5);
+            // Declare interpolatedAr2 in a broader scope
+            var iAr2,iArea2;
+            function updateTrial() {
+                var currentTrial = rec_array.shift();
+                if (currentTrial) {
+                    var w = currentTrial.w;
+                    var h = currentTrial.h;
+                    var area1 = w * h;
+                    var ar1 = w / h;
+
+                    var ar2 = h / w ;
+                    var t = area1*0.05;
+                    var area2 = area1 + Math.floor(Math.random() * 2*t) - t;
+                    area2 = Math.max(area1 - t, Math.min(area1 + t, area2));
+
+                    var leftRectangle = $('#leftRectangle');
+                    var rightRectangle = $('#rightRectangle');
+                    // var slider = $('#slider');
+                    
+                    // Update left rectangle
+                    leftRectangle.css('width', w + 'px');
+                    leftRectangle.css('height', h + 'px');
+
+                    // Update right rectangle
+                    rightRectangle.css('width', Math.sqrt(area2 * ar2) + 'px');
+                    rightRectangle.css('height', Math.sqrt(area2 / ar2) + 'px');
+
+                    slider.val(0.5); // Reset slider position
+
+                    // Handle verical-slider (aspect ratio) input event
+                    vslider.off('input').on('input', function() {
+                        var vsliderValue = parseFloat(vslider.val());
+
+                        // Calculate the adjusted aspect ratio based on slider position
+                        // For example, reducing ar2 when slider moves down and increasing it when moved up
+                        var minAr2 = 0.5; // Minimum ar
+                        var maxAr2 = 2.0; // Maximum ar
+
+                        // Interpolate area between minArea2 and maxArea2 based on slider value
+                        iAr2 = minAr2 + vsliderValue * (maxAr2 - minAr2);
+
+                        // Calculate new width and height based on the interpolated aspect ratio
+                        var adjustedWidth = Math.sqrt(iArea2 * iAr2);
+                        var adjustedHeight = Math.sqrt(iArea2 / iAr2);
+                        // Add these lines to your existing code
+                        var leftAspectRatioElement = document.getElementById('leftAspectRatio');
+                        var rightAspectRatioElement = document.getElementById('rightAspectRatio');
+                        // Update right rectangle's width and height based on the new aspect ratio
+                        rightRectangle.css('width', adjustedWidth + 'px');
+                        rightRectangle.css('height', adjustedHeight + 'px');
+                        // Update aspect ratio elements on the screen
+                        leftAspectRatioElement.textContent = ar1.toFixed(2); // Display left rectangle's aspect ratio with 2 decimal places
+                        rightAspectRatioElement.textContent = (1/iAr2).toFixed(2); // Display right rectangle's aspect ratio with 2 decimal places
+                    
+                    });
+
+
+                    // Handle slider input event
+                    slider.off('input').on('input', function() {
+                        var sliderValue = parseFloat(slider.val());
+
+                        // Calculate the adjusted area based on slider position
+                        // For example, reducing area2 when slider moves left and increasing it when moved right
+                        var minArea2 = 0.5*area1; // Minimum area
+                        var maxArea2 = 2.0*area1; // Maximum area
+
+                        // Interpolate area between minArea2 and maxArea2 based on slider value
+                        iArea2 = minArea2 + sliderValue * (maxArea2 - minArea2);
+
+                        // Calculate new width and height based on the interpolated aspect ratio
+                        var adjustedWidth = Math.sqrt(iArea2 * iAr2);
+                        var adjustedHeight = Math.sqrt(iArea2 / iAr2);
+                        // Add these lines to your existing code
+                        var leftArea = document.getElementById('leftArea');
+                        var rightArea = document.getElementById('rightArea');
+                        // Update right rectangle's width and height based on the new aspect ratio
+                        rightRectangle.css('width', adjustedWidth + 'px');
+                        rightRectangle.css('height', adjustedHeight + 'px');
+                        // Update area values on the screen
+                        leftArea.textContent = area1.toFixed(2); // Display left rectangle's aspect ratio with 2 decimal places
+                        rightArea.textContent = (iArea2).toFixed(2); // Display right rectangle's aspect ratio with 2 decimal places
+                    });
+
+                    // Handle next button click event
+                    $('#nextButton').off('click').on('click', function() {
+                        updateTrial();
+
+                        // Convert ar1 and interpolatedAr2 to numbers before storing in dataPoints array
+                        var num_Ar1 = parseFloat(ar1.toFixed(2));
+                        var num_iAr2 = parseFloat(iAr2.toFixed(2));
+                        var num_iArea2 = parseFloat(iArea2.toFixed(2));
+                        // Check if numericAr1 and numericInterpolatedAr2 are valid numbers
+                        if (!isNaN(num_Ar1) && !isNaN(num_iAr2) && !isNaN(num_iArea2)) {
+                            dataPoints.push({ ar1: num_Ar1, iAr2: num_iAr2, area1: area1,area2: iArea2 });
+                        } else {
+                            console.error('Invalid data points. Skipping addition to dataPoints array.');
+                        }
+                        
+                    });
+                } else {
+                    alert('Experiment completed!');
+                         // Calculate correlation coefficient
+                    var correlation = ss.sampleCorrelation(
+                        dataPoints.map(point => point.ar1),
+                        dataPoints.map(point => point.iAr2)
+                    );
+                    // console.log('Data Points:', dataPoints);
+                    console.log('Correlation Coefficient:', correlation);
+                    timestamp = Date.now()
+                    downloadJSON(dataPoints, timestamp + '.json');                 
+                    
+                }
+            }
+
+        });
+   
+
+    </script>
+</body>
+
+</html>

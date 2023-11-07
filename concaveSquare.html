@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rectangle Experiment</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .rect-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .rectangle {
+      width: 200px;
+      height: 100px;
+      background-color: lightblue;
+      margin: 20px;
+    }
+
+    .buttons button {
+      font-size: 18px;
+      margin: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="rect-container">
+      <div class="rectangle" id="rectangleNarrow"></div>
+      <div class="rectangle" id="rectangleWide"></div>
+    </div>
+    <div class="buttons">
+      <button id="buttonNarrow">Narrow Rectangle</button>
+      <button id="buttonWide">Wide Rectangle</button>
+    </div>
+    <p id="instruction">Choose the rectangle with the larger area.</p>
+  </div>
+
+  <script>
+    const rectangleNarrow = document.getElementById('rectangleNarrow');
+    const rectangleWide = document.getElementById('rectangleWide');
+    const buttonNarrow = document.getElementById('buttonNarrow');
+    const buttonWide = document.getElementById('buttonWide');
+    const instruction = document.getElementById('instruction');
+
+    let narrowWidth = 100;
+    let narrowHeight = 200;
+    let wideWidth = 200;
+    let wideHeight = 100;
+    let narrowStep = 20;
+    let wideStep = 20;
+    let narrowCorrectResponses = 0;
+    let wideCorrectResponses = 0;
+
+    let narrowAspectRatios = [];
+    let wideAspectRatios = [];
+
+    buttonNarrow.addEventListener('click', () => {
+      narrowWidth += narrowStep;
+      narrowCorrectResponses++;
+      checkResponse('Narrow');
+      updateRectangles();
+    });
+
+    buttonWide.addEventListener('click', () => {
+      wideWidth += wideStep;
+      wideCorrectResponses++;
+      checkResponse('Wide');
+      updateRectangles();
+    });
+
+    function updateRectangles() {
+      narrowHeight = 20000 / narrowWidth;
+      wideHeight = 20000 / wideWidth;
+
+      rectangleNarrow.style.width = `${narrowWidth}px`;
+      rectangleNarrow.style.height = `${narrowHeight}px`;
+
+      rectangleWide.style.width = `${wideWidth}px`;
+      rectangleWide.style.height = `${wideHeight}px`;
+    }
+
+    function checkResponse(type) {
+      if ((type === 'Narrow' && narrowCorrectResponses >= 1) || (type === 'Wide' && wideCorrectResponses >= 1)) {
+        narrowAspectRatios.push(narrowWidth / narrowHeight);
+        wideAspectRatios.push(wideWidth / wideHeight);
+
+        narrowStep += 20;
+        wideStep += 20;
+      } else {
+        narrowStep -= 60;
+        wideStep -= 60;
+      }
+
+      if (narrowStep <= 0) {
+        narrowStep = 20;
+      }
+      if (wideStep <= 0) {
+        wideStep = 20;
+      }
+
+      if (narrowStep >= 120 && wideStep >= 120) {
+        instruction.textContent = "Experiment Complete. Thank you!";
+        buttonNarrow.disabled = true;
+        buttonWide.disabled = true;
+
+        console.log("Narrow Aspect Ratios:", narrowAspectRatios);
+        console.log("Wide Aspect Ratios:", wideAspectRatios);
+      }
+    }
+  </script>
+</body>
+
+</html>
